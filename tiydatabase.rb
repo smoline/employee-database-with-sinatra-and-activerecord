@@ -21,6 +21,7 @@ end
 
 class Course < ActiveRecord::Base
   validates :name, presence: true
+  validates :intensive, inclusion: { in: [true, false] }
 
   self.primary_key = "id"
 end
@@ -70,8 +71,11 @@ get '/search_results' do
   search = params["search_param"]
 
   @employees = Employee.where("name LIKE ? OR github = ? OR slack = ?", "%#{search}%", search, search)
-
-  erb :search_results
+  if @employees.any?
+    erb :search_results
+  else
+    erb :no_item_found
+  end
 end
 
 get '/edit_employee' do
@@ -121,6 +125,8 @@ get '/course' do
 end
 
 get '/new_course' do
+  @course = Course.new
+
   erb :new_course
 end
 
@@ -141,8 +147,11 @@ get '/search_course_results' do
   which_course = params["search_param"]
 
   @courses = Course.where("name LIKE ?", "%#{which_course}%")
-
-  erb :course_search_results
+  if @courses.any?
+    erb :course_search_results
+  else
+    erb :no_item_found
+  end
 end
 
 get '/edit_course' do
