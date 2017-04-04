@@ -11,12 +11,13 @@ ActiveRecord::Base.establish_connection(
 )
 
 class Employee < ActiveRecord::Base
-  # validates :name, presence: true
+  validates :name, presence: true
+  validates :position, inclusion: { in: %w{Instructor Student}, message: "%{value} must be Instructor or Student" }
+
   self.primary_key = "id"
 end
 
 class Course < ActiveRecord::Base
-  # validates :course_name, presence: true
   self.primary_key = "id"
 end
 
@@ -44,20 +45,17 @@ get '/employee' do
 end
 
 get '/new_employee' do
-  # @employee = Employee.new
+  @employee = Employee.new
   erb :new_employee
 end
 
 get '/create_employee' do
-  Employee.create(params)
-  # @employee = Employee.create(params)
-  # if @employee.valid?
-  #   redirect('/')
-  # else
-  #   erb :new_employee
-  # end
-
-  redirect('/employees')
+  @employee = Employee.create(params)
+  if @employee.valid?
+    redirect('/')
+  else
+    erb :new_employee
+  end
 end
 
 get '/search_employee' do
@@ -86,7 +84,11 @@ get '/update_employee' do
   @employee = Employee.find(params["id"])
   @employee.update_attributes(params)
 
-  redirect('/employees')
+  if @employee.valid?
+    redirect to("/employee?id=#{@employee.id}")
+  else
+    erb :edit_employee
+  end
 end
 
 get '/delete_employee' do
