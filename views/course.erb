@@ -71,19 +71,21 @@
 					<tr>
 						<th class="info">Course Name</th>
 						<th class="info">Subject</th>
-						<th class="info">Cost</th>
-            <th class="info">Length</th>
+						<th class="info">Start Date</th>
+            <th class="info">End Date</th>
+            <th class="info">Intensive</th>
 					</tr>
 					<tr>
 						<td>
               <ul class="s-list">
-                <li class="s-list-item"><%= @course.course_name %></li>
+                <li class="s-list-item"><%= @course.name %></li>
                 <li class="s-list-item"><button type="submit" class="btn btn-default"><a href="/edit_course?id=<%= @course.id %>">Edit</a></button><button type="submit" class="btn btn-default button-right"><a href="/delete_course?id=<%= @course.id %>">Delete</a></button></li>
               </ul>
             </td>
-						<td><%= @course.course_subject %></td>
-						<td><%= @course.course_cost %></td>
-            <td><%= @course.course_length %></td>
+						<td><%= @course.subject %></td>
+						<td><%= @course.start_date %></td>
+            <td><%= @course.end_date %></td>
+            <td><%= @course.intensive %></td>
 					</tr>
 				</table>
 			</div>

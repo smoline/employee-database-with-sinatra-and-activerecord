@@ -13,11 +13,15 @@ ActiveRecord::Base.establish_connection(
 class Employee < ActiveRecord::Base
   validates :name, presence: true
   validates :position, inclusion: { in: %w{Instructor Student}, message: "%{value} must be Instructor or Student" }
+  validates :salary, numericality: { only_integer: true }
+  validates :phone, format: { with: /\d{3}-\d{3}-\d{4}/ }
 
   self.primary_key = "id"
 end
 
 class Course < ActiveRecord::Base
+  validates :name, presence: true
+
   self.primary_key = "id"
 end
 
@@ -52,7 +56,7 @@ end
 get '/create_employee' do
   @employee = Employee.create(params)
   if @employee.valid?
-    redirect('/')
+    redirect('/employees')
   else
     erb :new_employee
   end
@@ -121,9 +125,12 @@ get '/new_course' do
 end
 
 get '/create_course' do
-  Course.create(params)
-
-  redirect ('/courses')
+  @course = Course.create(params)
+  if @course.valid?
+    redirect('/courses')
+  else
+    erb :new_course
+  end
 end
 
 get '/search_course' do
@@ -133,7 +140,7 @@ end
 get '/search_course_results' do
   which_course = params["search_param"]
 
-  @courses = Course.where("course_name LIKE ?", "%#{which_course}%")
+  @courses = Course.where("name LIKE ?", "%#{which_course}%")
 
   erb :course_search_results
 end
@@ -152,7 +159,11 @@ get '/update_course' do
   @course = Course.find(params["id"])
   @course.update_attributes(params)
 
-  redirect('/courses')
+  if @course.valid?
+    redirect to("/course?id=#{@course.id}")
+  else
+    erb :edit_course
+  end
 end
 
 get '/delete_course' do
