@@ -11,6 +11,8 @@ ActiveRecord::Base.establish_connection(
 )
 
 class Employee < ActiveRecord::Base
+  # has_many :assignments
+  # has_many :courses, through: :assignments
   validates :name, presence: true
   validates :position, inclusion: { in: %w{Instructor Student}, message: "%{value} must be Instructor or Student" }
   validates :salary, numericality: { only_integer: true }
@@ -20,9 +22,17 @@ class Employee < ActiveRecord::Base
 end
 
 class Course < ActiveRecord::Base
+  # has_many :assignments
+  # has_many :employees, through: :assignments
   validates :name, presence: true
   validates :intensive, inclusion: { in: [true, false] }
 
+  self.primary_key = "id"
+end
+
+class Assignment < ActiveRecord::Base
+  # belongs_to :employee
+  # belongs_to :course
   self.primary_key = "id"
 end
 
@@ -183,3 +193,8 @@ get '/delete_course' do
 
   redirect to("/courses")
 end
+
+# get '/course_assignments' do
+#   database = PG.connect(dbname: "tiy-database")
+#   @assignments = Assignment.all
+# end
